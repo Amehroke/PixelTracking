@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video Tracking</title>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var videoPlayTime = null; // Time when video was played
+        //var tenMinutes = 10 * 60 * 1000; // 10 minutes in milliseconds
+        var tenSeconds = 10 * 1000;  // 10 seconds in milliseconds
+
+
+        // Listen for the 'play' event on the video element
+        document.getElementById("videoPlayer").addEventListener("play", function() {
+            videoPlayTime = new Date().getTime();
+            var currentTime = new Date().toISOString();
+            var pixelURL = "http://127.0.0.1:5000/track?user_id=123&event=video_play&time=" + currentTime;
+
+            // Update tracking pixel src to trigger the back-end
+            document.getElementById("trackingPixel").src = pixelURL;
+        });
+
+        // Listen for the 'click' event on the purchase button
+        document.getElementById("trackButton").addEventListener("click", function() {
+            if (videoPlayTime && new Date().getTime() - videoPlayTime <= tenSeconds) {
+                var currentTime = new Date().toISOString();
+                var pixelURL = "http://127.0.0.1:5000/track?user_id=123&event=item_purchased&video_time=" + videoPlayTime + "&time=" + currentTime;
+
+                // Update tracking pixel src to trigger the back-end
+                document.getElementById("trackingPixel").src = pixelURL;
+            }
+        });
+    });
+  </script>
+</head>
+<body>
+  <h1>Video Tracking</h1>
+
+  <video id="videoPlayer" width="640" height="360" controls>
+    <source src="product2.mp4" type="video/mp4">
+  </video>
+
+  <button id="trackButton">Purchase</button>
+
+  <!-- Hidden tracking pixel -->
+  <img id="trackingPixel" src="" alt="" style="display:none;">
+</body>
+</html>
