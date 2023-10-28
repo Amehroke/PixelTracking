@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cart Page</title>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      function loadCart() {
+        const cartList = document.getElementById('cartList');
+        cartList.innerHTML = ''; // Clear existing items
+        
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        cart.forEach((product, index) => {
+          const item = document.createElement('li');
+          item.textContent = `${product.name} - $${product.price}`;
+          const deleteButton = document.createElement('button');
+          deleteButton.textContent = 'Delete';
+          deleteButton.onclick = function() { removeFromCart(index); };
+          item.appendChild(deleteButton);
+          cartList.appendChild(item);
+        });
+      }
+      
+      function removeFromCart(index) {
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        cart.splice(index, 1);  // Remove item at index
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadCart();
+      }
+      
+      // Initial cart load
+      loadCart();
+    });
+  </script>
+</head>
+<body>
+  <h1>Your Cart</h1>
+  <ul id="cartList">
+    <!-- Cart items will be rendered here -->
+  </ul>
+</body>
+</html>

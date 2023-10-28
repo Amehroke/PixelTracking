@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Product Page</title>
+  <script>
+    function addToCart() {
+      const product = {
+        id: 1,
+        name: 'Hairspray',
+        price: 10.99
+      };
+      
+
+
+      // Save the product to local storage
+      localStorage.setItem('cart', JSON.stringify([product]));
+      document.getElementById("trackingPixel").src = `http://127.0.0.1:5000/?event=product_added_to_cart&product=${product.name}`;
+
+    }
+  </script>
+</head>
+<body>
+  <h1>Product Page</h1>
+  <p>Example Product - $10.99</p>
+  <button onclick="addToCart()">Add to Cart</button>
+  <img id="trackingPixel" src="" alt="" style="display:none;">
+
+</body>
+</html>

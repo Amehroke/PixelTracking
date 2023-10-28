@@ -1,11 +1,61 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, session, jsonify
 import json
 from datetime import datetime
 import io
 from PIL import Image
 import os
+import uuid
+from datetime import timedelta
 
 app = Flask(__name__)
+app.secret_key = '123'
+app.permanent_session_lifetime = timedelta(minutes=10)
+
+
+
+
+def check_linked_purchase():
+    events = session.get('events', [])
+    event_types = [event['event_type'] for event in events]
+    return 'video_played' in event_types and 'product_added_to_cart' in event_types
+
+@app.route('/')
+def test():
+    session.permanent = True
+    img = Image.new('RGBA', (1, 1), (0, 0, 0, 0))
+    byte_arr = io.BytesIO()
+    img.save(byte_arr, format='PNG')
+
+    if 'user_id' not in session:
+        session['user_id'] = str(uuid.uuid4())
+        session['events'] = []
+
+    event_type = request.args.get('event', 'unknown')
+    product = request.args.get('product', 'unknown')
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    session['events'].append({
+        'event_type': event_type,
+        'timestamp': timestamp,
+        'product': product
+    })
+
+    linked_purchase = check_linked_purchase()
+    if linked_purchase:
+        purchase_info = {
+            'user_id': session['user_id'],
+            'purchase_made': True,
+            'product': product,
+            'timestamp': timestamp
+        }
+
+        with open('purchase_records.json', 'a') as f:
+            json.dump(purchase_info, f)
+            f.write('\n')
+
+        return jsonify({"status": "Purchase linked", "details": purchase_info})
+
+    return send_file(io.BytesIO(byte_arr.getvalue()), mimetype='image/png')
 
 @app.route('/track')
 def track():
@@ -21,6 +71,7 @@ def track():
 
     # Only record events that are not 'video_play'
     if event != "video_play":
+       
         new_event = {
             'user_id': user_id,
             'event': event,
@@ -48,6 +99,9 @@ def track():
     img.save(byte_arr, format='PNG')
 
     return send_file(io.BytesIO(byte_arr.getvalue()), mimetype='image/png')
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
