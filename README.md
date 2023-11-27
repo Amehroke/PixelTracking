@@ -16,7 +16,7 @@ This is an HTML-based cart page example that uses JavaScript to dynamically disp
 # Dependencies
 
 Flask 
--For backend server of tracking pixel 
+For backend server of tracking pixel <br>
 
 Pillow
-- For generating a 1x1 image for the pixel 
+ For generating a 1x1 image for the pixel <br>
