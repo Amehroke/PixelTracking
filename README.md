@@ -12,3 +12,10 @@ This is a simple HTML-based product page example with a JavaScript function that
 
 # Cart.html 
 This is an HTML-based cart page example that uses JavaScript to dynamically display items in the shopping cart. It retrieves products from the browser's local storage, allowing the user to view their selected items and remove them if desired.
+
+# Dependencies
+
+Flask 
+-For backend server of tracking pixel 
+Pillow
+- For generating a 1x1 image for the pixel 
